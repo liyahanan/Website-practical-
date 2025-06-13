@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Project Template</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for Inter, matching the guideline */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Added background image styles */
+            background-image: url('https://placehold.co/1920x1080/E0F2F7/000000?text=Background+Image'); /* Placeholder image */
+            background-size: cover; /* Cover the entire background */
+            background-repeat: no-repeat; /* Do not repeat the image */
+            background-attachment: fixed; /* Keep background fixed while scrolling */
+        }
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* High z-index to be on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if content is too long */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            display: flex; /* Use flex for centering */
+            align-items: center;
+            justify-content: center;
+        }
+        /* Modal Content Box */
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            width: 95%; /* Make it wider */
+            max-width: 700px; /* Max width for larger screens */
+            position: relative;
+            transform: translateY(-50px); /* Slight lift for visual effect */
+            animation: fadeIn 0.3s ease-out forwards; /* Fade-in animation */
+            min-height: 300px; /* Minimum height for modal */
+            max-height: 90vh; /* Max height to prevent overflow */
+            overflow-y: auto; /* Scroll within modal if content is long */
+        }
+
+        /* Fade-in animation for modal */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-70px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Close Button */
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* Styles for task specific elements within modal */
+        .task-container input[type="text"],
+        .task-container input[type="number"],
+        .task-container input[type="email"],
+        .task-container input[type="password"],
+        .task-container select {
+            border: 1px solid #d1d5db; /* Tailwind gray-300 */
+            padding: 8px 12px;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+        .task-container button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .task-container label {
+            font-weight: 700;
+            font-size: 0.875rem; /* text-sm */
+            color: #374151; /* gray-700 */
+        }
+        .task-container h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1f2937; /* gray-900 */
+        }
+        .task-container .bg-gray-100 {
+            background-color: #f3f4f6; /* gray-100 */
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1.5rem;
+        }
+        .task-container .font-mono {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex justify-center py-10 px-4 sm:px-6 lg:px-8">
+    <!-- Main container for the document -->
+    <div class="bg-white p-8 sm:p-10 lg:p-12 rounded-lg shadow-xl w-full max-w-4xl">
+        <!-- Header Information Section -->
+        <div class="mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2 text-gray-800">STUDENT NAME : Cheri Alex Thomas</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2 text-gray-800">CURRENT DATE : 13.06.2025</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">SUBJECT NAME : Web Technologies</h1>
+        </div>
+
+        <!-- Information About Me Section -->
+        <div class="bg-blue-800 text-white p-3 sm:p-4 rounded-md mb-8 text-lg sm:text-xl font-semibold">
+            INFORMATION ABOUT ME : I am 21 years old. I am a certified ethical hacker, web penetration tester, and social engineering expert.
+        </div>
+
+        <!-- Task Details Section -->
+        <div class="mb-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">Task Details :</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Task Buttons with pop-up functionality -->
+                <button onclick="showTaskPopup(1)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 1</button>
+                <button onclick="showTaskPopup(2)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 2</button>
+                <button onclick="showTaskPopup(3)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 3</button>
+                <button onclick="showTaskPopup(4)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 4</button>
+                <button onclick="showTaskPopup(5)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 5</button>
+                <button onclick="showTaskPopup(6)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 6</button>
+                <button onclick="showTaskPopup(7)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 7</button>
+                <button onclick="showTaskPopup(8)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 8</button>
+                <!-- These two tasks span two columns to match the layout -->
+                <button onclick="showTaskPopup(9)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-2 mx-auto sm:mx-0 lg:mx-auto w-full sm:w-auto lg:w-full max-w-sm sm:max-w-none hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 9</button>
+                <button onclick="showTaskPopup(10)" class="bg-teal-700 text-white p-4 text-center rounded-md font-semibold shadow-md col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-2 mx-auto sm:mx-0 lg:mx-auto w-full sm:w-auto lg:w-full max-w-sm sm:max-w-none hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Task 10</button>
+            </div>
+        </div>
+
+        <!-- Mini Project Title and Information Section -->
+        <div class="mb-8">
+            <h2 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">Mini project Title : SkillHive</h2>
+            <h3 class="text-xl sm:text-2xl font-bold mb-4 text-gray-800">Information :</h3>
+            <p class="mb-4 text-gray-700 leading-relaxed">Prepare a concise presentation covering the following points :</p>
+            <ol class="list-decimal list-inside pl-4 space-y-2 text-gray-700">
+                <li><span class="font-semibold">Problem Statement:</span> People lack affordable ways to learn new skills, and many have skills but no place to share them.</li>
+                <li><span class="font-semibold">Objective:</span> To create a platform for free skill-sharing in local communities.</li>
+                <li><span class="font-semibold">Goal:</span> Help users teach and learn skills by connecting them without money.</li>
+                <li><span class="font-semibold">Result/Output:</span> A working website where users can offer or request skills.</li>
+                <li><span class="font-semibold">Technology Used:</span> HTML, Tailwind CSS, JavaScript, Netlify</li>
+                <li><span class="font-semibold">User Audience:</span> Anyone who wants to teach or learn practical skills—students, adults, freelancers, etc.</li>
+                <li><span class="font-semibold">Impact on Society:</span> Encourages learning, sharing, and stronger community connections.</li>
+            </ol>
+        </div>
+
+        <!-- Screenshots Section -->
+        <div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-blue-800 tracking-wide">SCREENSHOTS</h2>
+        </div>
+    </div>
+
+    <!-- The Pop-up Modal Structure -->
+    <div id="taskModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeTaskModal()">&times;</span>
+            <h3 id="modalTaskTitle" class="text-xl font-bold mb-4 text-gray-800"></h3>
+            <!-- This div will hold the dynamic task content -->
+            <div id="modalTaskBody" class="task-container p-4 bg-gray-50 rounded-md">
+                <!-- Task content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure to hold HTML content and JavaScript for each task
+        const taskData = [
+            null, // Index 0 is null to align with 1-based task numbering
+
+            // Task 1: Basic Arithmetic Operations
+            {
+                title: "Task 1: Basic Arithmetic Operations",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="input1_t1">First Input:</label>
+                        <input type="text" id="input1_t1" placeholder="Enter number or text">
+                    </div>
+                    <div class="mb-4">
+                        <label for="input2_t1">Second Input:</label>
+                        <input type="text" id="input2_t1" placeholder="Enter number or text">
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-6">
+                        <button onclick="performOperation_t1('+')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Add (+)</button>
+                        <button onclick="performOperation_t1('-')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Subtract (-)</button>
+                        <button onclick="performOperation_t1('*')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Multiply (*)</button>
+                        <button onclick="performOperation_t1('/')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Divide (/)</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Result:</h3>
+                        <p id="result_t1" class="text-gray-900 text-xl font-mono"></p>
+                    </div>
+                `,
+                jsCode: `
+                    function performOperation_t1(operator) {
+                        const input1 = document.getElementById('input1_t1').value;
+                        const input2 = document.getElementById('input2_t1').value;
+                        const resultElement = document.getElementById('result_t1');
+                        const num1 = parseFloat(input1);
+                        const num2 = parseFloat(input2);
+                        let result;
+                        if (!isNaN(num1) && !isNaN(num2)) {
+                            switch (operator) {
+                                case '+': result = num1 + num2; break;
+                                case '-': result = num1 - num2; break;
+                                case '*': result = num1 * num2; break;
+                                case '/': result = num2 !== 0 ? num1 / num2 : "Error: Division by zero!"; break;
+                                default: result = "Invalid operator";
+                            }
+                        } else if (operator === '+') {
+                            result = input1 + input2;
+                        } else {
+                            result = "Cannot perform operation on non-numeric input (except for addition of strings).";
+                        }
+                        resultElement.textContent = result;
+                    }
+                `
+            },
+
+            // Task 2: String Manipulation
+            {
+                title: "Task 2: String Manipulation",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="stringInput_t2">Enter a string:</label>
+                        <input type="text" id="stringInput_t2" placeholder="e.g., Hello World">
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <button onclick="manipulateString_t2()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Manipulate String</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Results:</h3>
+                        <p><span class="font-semibold">Original String:</span> <span id="originalString_t2" class="font-mono"></span></p>
+                        <p><span class="font-semibold">Reversed String:</span> <span id="reversedString_t2" class="font-mono"></span></p>
+                        <p><span class="font-semibold">3rd Character:</span> <span id="thirdChar_t2" class="font-mono"></span></p>
+                        <p><span class="font-semibold">4th Character:</span> <span id="fourthChar_t2" class="font-mono"></span></p>
+                    </div>
+                `,
+                jsCode: `
+                    function manipulateString_t2() {
+                        const stringInput = document.getElementById('stringInput_t2').value;
+                        document.getElementById('originalString_t2').textContent = stringInput;
+                        const reversed = stringInput.split('').reverse().join('');
+                        document.getElementById('reversedString_t2').textContent = reversed;
+                        const thirdChar = stringInput.length >= 3 ? stringInput[2] : 'N/A (string too short)';
+                        const fourthChar = stringInput.length >= 4 ? stringInput[3] : 'N/A (string too short)';
+                        document.getElementById('thirdChar_t2').textContent = thirdChar;
+                        document.getElementById('fourthChar_t2').textContent = fourthChar;
+                    }
+                `
+            },
+
+            // Task 3: Signup Form and Data Display
+            {
+                title: "Task 3: User Signup Form",
+                htmlContent: `
+                    <form id="signupForm_t3" class="mb-6">
+                        <div class="mb-4">
+                            <label for="username_t3">Username:</label>
+                            <input type="text" id="username_t3" name="username" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email_t3">Email:</label>
+                            <input type="email" id="email_t3" name="email" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="password_t3">Password:</label>
+                            <input type="password" id="password_t3" name="password" required>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Submit</button>
+                            <button type="reset" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Reset</button>
+                        </div>
+                    </form>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Entered Data:</h3>
+                        <p><span class="font-semibold">Username:</span> <span id="displayUsername_t3" class="font-mono"></span></p>
+                        <p><span class="font-semibold">Email:</span> <span id="displayEmail_t3" class="font-mono"></span></p>
+                        <p><span class="font-semibold">Password:</span> <span id="displayPassword_t3" class="font-mono"></span></p>
+                    </div>
+                `,
+                jsCode: `
+                    const signupForm_t3 = document.getElementById('signupForm_t3');
+                    if (signupForm_t3) { // Check if form exists before adding listener
+                        signupForm_t3.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            document.getElementById('displayUsername_t3').textContent = document.getElementById('username_t3').value;
+                            document.getElementById('displayEmail_t3').textContent = document.getElementById('email_t3').value;
+                            document.getElementById('displayPassword_t3').textContent = document.getElementById('password_t3').value;
+                        });
+                    }
+                `
+            },
+
+            // Task 4: Person Object Creation
+            {
+                title: "Task 4: Person Object Creation",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="personName_t4">Name:</label>
+                        <input type="text" id="personName_t4" value="Alice">
+                    </div>
+                    <div class="mb-4">
+                        <label for="personAge_t4">Age:</label>
+                        <input type="number" id="personAge_t4" value="30">
+                    </div>
+                    <div class="mb-4">
+                        <label for="personGender_t4">Gender:</label>
+                        <input type="text" id="personGender_t4" value="Female">
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <button onclick="createAndDisplayPerson_t4()" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Create & Display Person</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Person Details:</h3>
+                        <p><span class="font-semibold">Name:</span> <span id="displayName_t4" class="font-mono"></span></p>
+                        <p><span class="font-semibold">Age:</span> <span id="displayAge_t4" class="font-mono"></span></p>
+                        <p><span class="font-semibold">Gender:</span> <span id="displayGender_t4" class="font-mono"></span></p>
+                    </div>
+                `,
+                jsCode: `
+                    function createAndDisplayPerson_t4() {
+                        const name = document.getElementById('personName_t4').value;
+                        const age = parseInt(document.getElementById('personAge_t4').value);
+                        const gender = document.getElementById('personGender_t4').value;
+                        const person = { name: name, age: age, gender: gender };
+                        document.getElementById('displayName_t4').textContent = person.name;
+                        document.getElementById('displayAge_t4').textContent = person.age;
+                        document.getElementById('displayGender_t4').textContent = person.gender;
+                    }
+                    // Call it immediately after content is loaded
+                    createAndDisplayPerson_t4();
+                `
+            },
+
+            // Task 5: Countdown Timer/Stopwatch
+            {
+                title: "Task 5: Countdown Timer / Stopwatch",
+                htmlContent: `
+                    <div class="text-center mb-6">
+                        <p id="timerDisplay_t5" class="text-5xl font-mono text-gray-900 mb-4">00:00:00</p>
+                        <p class="text-sm text-gray-600">Enter initial time (seconds) for countdown, or leave empty for stopwatch.</p>
+                        <input type="number" id="initialTimeInput_t5" class="w-32 text-center" placeholder="Seconds">
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button onclick="startTimer_t5()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Play</button>
+                        <button onclick="pauseTimer_t5()" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Pause</button>
+                        <button onclick="stopTimer_t5()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Stop</button>
+                        <button onclick="resetTimer_t5()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Reset</button>
+                    </div>
+                `,
+                jsCode: `
+                    let timerInterval_t5;
+                    let totalSeconds_t5 = 0;
+                    let isRunning_t5 = false;
+                    let mode_t5 = 'stopwatch';
+                    const timerDisplay_t5 = document.getElementById('timerDisplay_t5');
+                    const initialTimeInput_t5 = document.getElementById('initialTimeInput_t5');
+
+                    function formatTime_t5(seconds) {
+                        const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+                        const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+                        const s = String(seconds % 60).padStart(2, '0');
+                        return \`\${h}:\${m}:\${s}\`;
+                    }
+
+                    function updateTimerDisplay_t5() {
+                        if (timerDisplay_t5) timerDisplay_t5.textContent = formatTime_t5(totalSeconds_t5);
+                    }
+
+                    function startTimer_t5() {
+                        if (isRunning_t5) return;
+                        const initialSeconds = parseInt(initialTimeInput_t5.value);
+                        if (!isNaN(initialSeconds) && initialSeconds > 0 && mode_t5 === 'stopwatch') {
+                            totalSeconds_t5 = initialSeconds;
+                            mode_t5 = 'countdown';
+                            updateTimerDisplay_t5();
+                        } else if (isNaN(initialSeconds) || initialSeconds <= 0) {
+                            mode_t5 = 'stopwatch';
+                        }
+                        isRunning_t5 = true;
+                        timerInterval_t5 = setInterval(() => {
+                            if (mode_t5 === 'stopwatch') {
+                                totalSeconds_t5++;
+                            } else if (mode_t5 === 'countdown') {
+                                totalSeconds_t5--;
+                                if (totalSeconds_t5 <= 0) {
+                                    totalSeconds_t5 = 0;
+                                    stopTimer_t5();
+                                }
+                            }
+                            updateTimerDisplay_t5();
+                        }, 1000);
+                    }
+
+                    function pauseTimer_t5() {
+                        clearInterval(timerInterval_t5);
+                        isRunning_t5 = false;
+                    }
+
+                    function stopTimer_t5() {
+                        clearInterval(timerInterval_t5);
+                        isRunning_t5 = false;
+                    }
+
+                    function resetTimer_t5() {
+                        stopTimer_t5();
+                        totalSeconds_t5 = 0;
+                        mode_t5 = 'stopwatch';
+                        if (initialTimeInput_t5) initialTimeInput_t5.value = '';
+                        updateTimerDisplay_t5();
+                    }
+                    // Call update on load if elements exist
+                    if (timerDisplay_t5) updateTimerDisplay_t5();
+                `
+            },
+
+            // Task 6: Array of Fruits and Third Element
+            {
+                title: "Task 6: Fruits Array",
+                htmlContent: `
+                    <div class="mb-4">
+                        <p class="text-gray-700 text-lg mb-2">Here is an array of fruits:</p>
+                        <p id="fruitsArrayDisplay_t6" class="font-mono text-blue-700 text-xl font-semibold"></p>
+                    </div>
+                    <div class="mt-6 bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Third Element:</h3>
+                        <p id="thirdElementDisplay_t6" class="font-mono text-green-700 text-2xl font-bold"></p>
+                    </div>
+                `,
+                jsCode: `
+                    const fruits_t6 = ["Apple", "Banana", "Orange", "Grape", "Strawberry"];
+                    document.getElementById('fruitsArrayDisplay_t6').textContent = JSON.stringify(fruits_t6);
+                    const thirdElement_t6 = fruits_t6.length >= 3 ? fruits_t6[2] : "Array does not have a third element.";
+                    document.getElementById('thirdElementDisplay_t6').textContent = thirdElement_t6;
+                `
+            },
+
+            // Task 7: Arithmetic Function with User Choice
+            {
+                title: "Task 7: Arithmetic Operations (User Choice)",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="num1_t7">Number 1:</label>
+                        <input type="number" id="num1_t7" value="10">
+                    </div>
+                    <div class="mb-4">
+                        <label for="num2_t7">Number 2:</label>
+                        <input type="number" id="num2_t7" value="5">
+                    </div>
+                    <div class="mb-6">
+                        <label for="operation_t7">Select Operation:</label>
+                        <select id="operation_t7">
+                            <option value="sum">Sum (+)</option>
+                            <option value="difference">Difference (-)</option>
+                            <option value="multiplication">Multiplication (*)</option>
+                            <option value="division">Division (/)</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <button onclick="calculateResult_t7()" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Calculate</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Result:</h3>
+                        <p id="calculationResult_t7" class="font-mono text-gray-900 text-xl font-semibold"></p>
+                    </div>
+                `,
+                jsCode: `
+                    function calculateResult_t7() {
+                        const num1 = parseFloat(document.getElementById('num1_t7').value);
+                        const num2 = parseFloat(document.getElementById('num2_t7').value);
+                        const operation = document.getElementById('operation_t7').value;
+                        const resultElement = document.getElementById('calculationResult_t7');
+                        if (isNaN(num1) || isNaN(num2)) {
+                            resultElement.textContent = "Please enter valid numbers.";
+                            return;
+                        }
+                        let result;
+                        switch (operation) {
+                            case 'sum': result = num1 + num2; break;
+                            case 'difference': result = num1 - num2; break;
+                            case 'multiplication': result = num1 * num2; break;
+                            case 'division': result = num2 !== 0 ? num1 / num2 : "Error: Division by zero!"; break;
+                            default: result = "Invalid operation.";
+                        }
+                        resultElement.textContent = result;
+                    }
+                    // Call calculate on load if elements exist
+                    if (document.getElementById('num1_t7')) calculateResult_t7();
+                `
+            },
+
+            // Task 8: Working with Arrays in JavaScript
+            {
+                title: "Task 8: JavaScript Array Data Management",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="itemInput_t8">Add/Remove Item:</label>
+                        <input type="text" id="itemInput_t8" placeholder="Enter item">
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3 mb-6">
+                        <button onclick="addItem_t8()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Add Item</button>
+                        <button onclick="removeItem_t8()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Remove Last Item</button>
+                        <button onclick="clearAllItems_t8()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Clear All</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Current Array:</h3>
+                        <ul id="itemList_t8" class="list-disc list-inside text-gray-700">
+                            <!-- Items will be dynamically added here -->
+                        </ul>
+                    </div>
+                `,
+                jsCode: `
+                    const myArray_t8 = [];
+                    const itemInput_t8 = document.getElementById('itemInput_t8');
+                    const itemList_t8 = document.getElementById('itemList_t8');
+
+                    function updateItemList_t8() {
+                        itemList_t8.innerHTML = '';
+                        if (myArray_t8.length === 0) {
+                            itemList_t8.innerHTML = '<li class="text-gray-500">Array is empty.</li>';
+                        } else {
+                            myArray_t8.forEach(item => {
+                                const li = document.createElement('li');
+                                li.textContent = item;
+                                itemList_t8.appendChild(li);
+                            });
+                        }
+                    }
+
+                    function addItem_t8() {
+                        const item = itemInput_t8.value.trim();
+                        if (item) {
+                            myArray_t8.push(item);
+                            itemInput_t8.value = '';
+                            updateItemList_t8();
+                        }
+                    }
+
+                    function removeItem_t8() {
+                        if (myArray_t8.length > 0) {
+                            myArray_t8.pop();
+                            updateItemList_t8();
+                        }
+                    }
+
+                    function clearAllItems_t8() {
+                        myArray_t8.length = 0;
+                        updateItemList_t8();
+                    }
+                    updateItemList_t8(); // Initial update
+                `
+            },
+
+            // Task 9: Map Function to Double Elements
+            {
+                title: "Task 9: Using `map` to Double Array Elements",
+                htmlContent: `
+                    <div class="mb-4">
+                        <p class="text-gray-700 text-lg mb-2">Original Array:</p>
+                        <p id="originalArrayDisplay_t9" class="font-mono text-blue-700 text-xl font-semibold"></p>
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <button onclick="doubleArrayElements_t9()" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Double Elements</button>
+                    </div>
+                    <div class="mt-6 bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Doubled Array:</h3>
+                        <p id="doubledArrayDisplay_t9" class="font-mono text-green-700 text-xl font-bold"></p>
+                    </div>
+                `,
+                jsCode: `
+                    const numbers_t9 = [1, 2, 3, 4, 5];
+                    document.getElementById('originalArrayDisplay_t9').textContent = JSON.stringify(numbers_t9);
+                    function doubleArrayElements_t9() {
+                        const doubledNumbers = numbers_t9.map(num => num * 2);
+                        document.getElementById('doubledArrayDisplay_t9').textContent = JSON.stringify(doubledNumbers);
+                    }
+                    document.getElementById('doubledArrayDisplay_t9').textContent = "Click 'Double Elements'";
+                `
+            },
+
+            // Task 10: Find 10th Character from Entered Array/String
+            {
+                title: "Task 10: Find 10th Character from Input",
+                htmlContent: `
+                    <div class="mb-4">
+                        <label for="charInput_t10">Enter text (at least 10 characters):</label>
+                        <input type="text" id="charInput_t10" placeholder="e.g., This is a long string of text.">
+                    </div>
+                    <div class="flex justify-center mb-6">
+                        <button onclick="findTenthChar_t10()" class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">Find 10th Character</button>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Result:</h3>
+                        <p id="tenthCharResult_t10" class="font-mono text-gray-900 text-xl font-semibold"></p>
+                    </div>
+                `,
+                jsCode: `
+                    function findTenthChar_t10() {
+                        const inputString = document.getElementById('charInput_t10').value;
+                        const resultElement = document.getElementById('tenthCharResult_t10');
+                        if (inputString.length >= 10) {
+                            resultElement.textContent = \`The 10th character is: '\${inputString[9]}'\`;
+                        } else {
+                            resultElement.textContent = "Input is too short. Please enter at least 10 characters.";
+                        }
+                    }
+                `
+            }
+        ];
+
+        // Function to show the task pop-up with dynamic content
+        function showTaskPopup(taskId) {
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTaskTitle');
+            const modalBody = document.getElementById('modalTaskBody');
+
+            if (taskId > 0 && taskId < taskData.length && taskData[taskId]) {
+                const task = taskData[taskId];
+                modalTitle.textContent = task.title;
+
+                // Clear previous content
+                modalBody.innerHTML = '';
+
+                // Insert HTML content
+                modalBody.innerHTML = task.htmlContent;
+
+                // Create and append a new script element to execute JS
+                const scriptElement = document.createElement('script');
+                scriptElement.textContent = task.jsCode;
+                modalBody.appendChild(scriptElement);
+
+                modal.style.display = 'flex'; // Show the modal
+            } else {
+                modalTitle.textContent = "Task Not Found";
+                modalBody.innerHTML = '<p class="text-red-600">The requested task could not be found or has no content.</p>';
+                modal.style.display = 'flex';
+            }
+        }
+
+        // Function to close the task pop-up
+        function closeTaskModal() {
+            const modal = document.getElementById('taskModal');
+            modal.style.display = 'none';
+            const modalBody = document.getElementById('modalTaskBody');
+            modalBody.innerHTML = ''; // Clear content when closing
+        }
+
+        // Close the modal if the user clicks outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target == modal) {
+                closeTaskModal();
+            }
+        }
+    </script>
+</body>
+</html>
